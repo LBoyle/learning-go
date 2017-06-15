@@ -29,7 +29,7 @@ func main() {
   defer session.Close()
   // c for connection? is my guess
   c := session.DB("testgomongo").C("people")
-  err = c.Insert(&Person{"Louis", "louis@louis.com", {"London", "Islington"}}, &Person{"Gabe", "gabe@gabe.com", {"London", "Islington"}})
+  err = c.Insert(&Person{"Louis", "louis@louis.com", &Address{"London", "Islington"}}, &Person{"Gabe", "gabe@gabe.com", &Address{"London", "Islington"}})
   if err != nil {
     log.Fatal(err)
   }
