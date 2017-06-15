@@ -97,30 +97,69 @@ func ensureIndex(s *mgo.Session) {
 
 func BooksIndex(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+    session := s.Copy()
+    defer session.Close()
 
+    c := session.DB("testgoji").C("books")
+
+    var books []Book
+    // first find, empty {} for all
+    // & what the response will be called
+    err := c.Find(bson.M{}).All(&books)
+    // bigger error handler
+    if err != nil {
+      // writer, content, status
+      ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
+      log.Println("Failed to get all books: ", err)
+      // explicit return
+      return
+    }
+    // not sure what MarshalIndent means must google
+    respBody, err := json.MarshalIndent(books, "", " ")
+    if err != nil {
+      log.Fatal(err)
+    }
+    // success
+    ResponseWithJson(w, respBody, httpStatusOK)
   }
 }
 
 func BooksCreate(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+    session := s.Copy()
+    defer session.Close()
+
+    c := session.DB("testgoji").C("books")
 
   }
 }
 
 func BooksByISBN(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+    session := s.Copy()
+    defer session.Close()
+
+    c := session.DB("testgoji").C("books")
 
   }
 }
 
 func BooksUpdate(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+    session := s.Copy()
+    defer session.Close()
+
+    c := session.DB("testgoji").C("books")
 
   }
 }
 
 func BooksDelete(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
+    session := s.Copy()
+    defer session.Close()
+
+    c := session.DB("testgoji").C("books")
 
   }
 }
