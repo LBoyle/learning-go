@@ -75,7 +75,24 @@ func main() {
 }
 
 func ensureIndex(s *mgo.Session) {
+  session := s.Copy()
+  defer session.Close()
 
+  // connection, db, collection
+  c := session.DB("testgoji").C("books")
+
+  // don't know what background and sparse do db behaviour that you don't have to worry about with JS
+  index := mgo.Index{
+    Key: []string{"isbn"},
+    Unique: true,
+    DropDups: true,
+    Background: true,
+    Sparse: true,
+  }
+  err := c.EnsureIndex(index)
+  if err != nil {
+    panic(err)
+  }
 }
 
 func BooksIndex(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
