@@ -65,7 +65,13 @@ func main() {
   session.SetMode(mgo.Monotonic, true)
   ensureIndex(session)
 
-
+  // this is where it differs from 02 using gojis
+  mux := goji.NewMux()
+  mux.HandleFunc(pat.Get("/books"), BooksIndex(session))
+  mux.HandleFunc(pat.Post("/books"), BooksCreate(session))
+  mux.HandleFunc(pat.Get("/books/:isbn"), BooksByISBN(session))
+  mux.HandleFunc(pat.Delete("/books/:isbn"), BooksDelete(session))
+  http.ListenAndServe("localhost:4000", mux)
 }
 
 func ensureIndex(s *mgo.Session) {
