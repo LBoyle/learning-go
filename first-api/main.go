@@ -9,15 +9,15 @@ import (
 )
 
 type Person struct {
-  ID string `json:"id, omitempty"`
-  Firstname string `json:"firstname, omitempty"`
-  Lastname string `json:"lastname, omitempty"`
-  Address *Address `json:"address, omitempty"`
+  ID string `json:"id,omitempty"`
+  Firstname string `json:"firstname,omitempty"`
+  Lastname string `json:"lastname,omitempty"`
+  Address *Address `json:"address,omitempty"`
 }
 
 type Address struct {
-  City string `json:"city, omitempty"`
-  Borough string `json:"borough, omitempty"`
+  City string `json:"city,omitempty"`
+  Borough string `json:"borough,omitempty"`
 }
 
 var people []Person
@@ -49,7 +49,7 @@ func CreatePerson(w http.ResponseWriter, req *http.Request) {
 func DeletePerson(w http.ResponseWriter, req *http.Request) {
   params := mux.Vars(req)
   for index, item := range people {
-    if item.ID = params["id"] {
+    if item.ID == params["id"] {
       people = append(people[:index], people[index+1:]...)
       break
     }
