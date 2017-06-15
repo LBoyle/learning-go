@@ -27,6 +27,11 @@ func main() {
   }
   // don't know what this means
   defer session.Close()
+  // dropping the db because it was creating more every time I run
+  err = session.DB("testgomongo").DropDatabase()
+	if err != nil {
+		panic(err)
+	}
   // c for connection? is my guess
   c := session.DB("testgomongo").C("people")
   err = c.Insert(&Person{"Louis", "louis@louis.com", &Address{"London", "Islington"}}, &Person{"Gabe", "gabe@gabe.com", &Address{"London", "Islington"}})
