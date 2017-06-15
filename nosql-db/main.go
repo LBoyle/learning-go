@@ -22,7 +22,6 @@ type Address struct {
 func main() {
   // connect to database
   session, err := mgo.Dial("mongodb://localhost:27017")
-  // panic if there's an error
   if err != nil {
     panic(err)
   }
@@ -31,4 +30,15 @@ func main() {
   // c for connection? is my guess
   c := session.DB("testgomongo").C("people")
   err = c.Insert(&Person{"Louis", "louis@louis.com", {"London", "Islington"}}, &Person{"Gabe", "gabe@gabe.com", {"London", "Islington"}})
+  if err != nil {
+    log.Fatal(err)
+  }
+  // getting a person out by name
+  result := Person{}
+  err = c.Find(bson.M{"name": "Louis"}).One(&result)
+  if err != nil {
+    log.Fatal(err)
+  }
+  // prove that it works
+  fmt.Println("Email: ", result.Email)
 }
