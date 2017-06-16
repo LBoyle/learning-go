@@ -222,7 +222,23 @@ func BooksDelete(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
     session := s.Copy()
     defer session.Close()
 
+    isbn := pat.Param(r, "isbn")
+
     c := session.DB("testgoji").C("books")
 
+    err := c.Remove(bson.M{"isbn": isbn})
+    if err != nil {
+      switch err {
+      default:
+        ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
+        log.Println("Failed to delete book: ", err)
+        return
+      case mgo.ErrNotFound:
+        ErrorWithJSON(w, "Book not found", http.StatusNotFound)
+        return
+      }
+    }
+
+    w.WriteHeader(http.StatusNoContent)
   }
 }
