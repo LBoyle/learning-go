@@ -33,10 +33,10 @@ func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
 }
 
 // response handler
-func RespondWithJSON(w http.ResponseWriter, json []byte, code int) {
+func ResponseWithJSON(w http.ResponseWriter, json []byte, code int) {
   w.Header().Set("Content-Type", "application/json;charset=utf-8")
   w.WriteHeader(code)
-  fmt.Write(json)
+  w.Write(json)
 }
 
 // going with books like the tutorial
@@ -120,17 +120,18 @@ func BooksIndex(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
       log.Fatal(err)
     }
     // success
-    ResponseWithJSON(w, respBody, httpStatusOK)
+    ResponseWithJSON(w, respBody, http.StatusOK)
   }
 }
 
 func BooksCreate(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
     session := s.Copy()
-    defer session.Close()ar B
+    defer session.Close()
 
     var book Book
     decoder := json.NewDecoder(r.Body)
+    err := decoder.Decode(&book)
     if err != nil {
       ErrorWithJSON(w, "Incorrect body", http.StatusBadRequest)
       return
@@ -150,7 +151,7 @@ func BooksCreate(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
     }
     w.Header().Set("Content-Type", "application/json")
     w.Header().Set("Location", r.URL.Path+"/"+book.ISBN)
-    w.WriteHeader(http.StatusCode)
+    w.WriteHeader(http.StatusCreated)
   }
 }
 
@@ -179,7 +180,7 @@ func BooksByISBN(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
       log.Fatal(err)
     }
 
-    ResponseWithJSON(w, respBody, httpStatusOK)
+    ResponseWithJSON(w, respBody, http.StatusOK)
   }
 }
 
