@@ -127,10 +127,30 @@ func BooksIndex(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
 func BooksCreate(s *mgo.Session) func(w http.ResponseWriter, r *http.Request) {
   return func(w http.ResponseWriter, r *http.Request) {
     session := s.Copy()
-    defer session.Close()
+    defer session.Close()ar B
+
+    var book Book
+    decoder := json.NewDecoder(r.Body)
+    if err != nil {
+      ErrorWithJSON(w, "Incorrect body", http.StatusBadRequest)
+      return
+    }
 
     c := session.DB("testgoji").C("books")
 
+    err = c.Insert(book)
+    if err != nil {
+      if mgo.IsDup(err) {
+        ErrorWithJSON(w, "Book with this ISBN already exists", http.StatusBadRequest)
+        return
+      }
+      ErrorWithJSON(w, "Database error", http.StatusInternalServerError)
+      log.Println("Failed to instert book: ", err)
+      return
+    }
+    w.Header().Set("Content-Type", "application/json")
+    w.Header().Set("Location", r.URL.Path+"/"+book.ISBN)
+    w.WriteHeader(http.StatusCode)
   }
 }
 
