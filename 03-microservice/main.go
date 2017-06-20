@@ -25,7 +25,7 @@ import (
 // 	http.ListenAndServe("localhost:8000", mux)
 // }
 
-// error handler I think
+// error handler
 func ErrorWithJSON(w http.ResponseWriter, message string, code int) {
   w.Header().Set("Content-Type", "application/json;charset=utf-8")
   w.WriteHeader(code)
@@ -60,12 +60,11 @@ func main() {
 	// 	panic(err)
 	// }
 
-  // saw this in the last tutorial, everybody's doing it so shall I
-  // I think it controlls db server traffic
+  // I think it controlls db server traffic or db topology
   session.SetMode(mgo.Monotonic, true)
   ensureIndex(session)
 
-  // this is where it differs from 02 using gojis
+  // this is where it differs from 02 using goji
   mux := goji.NewMux()
   mux.HandleFunc(pat.Get("/books"), BooksIndex(session))
   mux.HandleFunc(pat.Post("/books"), BooksCreate(session))
@@ -81,7 +80,7 @@ func ensureIndex(s *mgo.Session) {
   // connection, db, collection
   c := session.DB("testgoji").C("books")
 
-  // don't know what background and sparse do db behaviour that you don't have to worry about with JS
+  // don't know what background and sparse do, db behaviour that you don't have to worry about with JS
   index := mgo.Index{
     Key: []string{"isbn"},
     Unique: true,
