@@ -55,7 +55,7 @@ func main() {
   defer session.Close()
 
   // dropping here if I need to
-  // err = session.DB("testgomongo").DropDatabase()
+  // err = session.DB("testgoji").DropDatabase()
 	// if err != nil {
 	// 	panic(err)
 	// }
